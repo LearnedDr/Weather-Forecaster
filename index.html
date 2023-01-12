@@ -33,13 +33,14 @@
         <div class="row container-fluid col-8">
             <div class="row container-fluid" id="main-info">    
                 <div class="card col-6">
+                    <button id="nothingness"> I do nothing</button>
                     <!-- <img src="./Assets/images/pikachu-image.png" class="img-fluid" alt="Responsive image"> -->
                     <ul>
-                        <li>High Temp</li>
-                        <li>Low Temp</li>
-                        <li>Humidity</li>
-                        <li>Wind Speed</li>
-                        <li>Air Pressure</li>
+                        <li>High Temp <span id="high-temp"></span></li>
+                        <li>Low Temp <span id="low-temp"></span></li>
+                        <li>Humidity <span id="humidity"></span></li>
+                        <li>Wind Speed <span id="wind-speed"></span></li>
+                        <li>Air Pressure <span id="air-pressure"></span></li>
                     </ul>
                 </div>   
             </div>
@@ -114,8 +115,13 @@
                 </div>
        
 
+            </div>
         </div>
     </div>
+    <div id="history">
+        Search History
+    </div>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="./Assets/config.js"></script>
 <script src="./Assets/script.js"></script>
 
