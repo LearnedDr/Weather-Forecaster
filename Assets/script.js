@@ -58,25 +58,28 @@ function displayCurrent(current) {
 };
 
 
-
 function displayForecast(forecast) {
-
+    
     console.log(forecast);
 
     for (let i = 7; i < forecast.length; i+=8) {
+        var iconcode = forecast[i].weather[0].icon;
+        var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
+        let lowTemp = document.getElementById("weather");
+        lowTemp.setAttribute("src", iconurl);
 
-        let {dt, main: {temp, humidity}, wind:{speed}, weather:[{icon}] } = forecast[i];
+//         let {dt, main: {temp, humidity}, wind:{speed}, weather:[{icon}] } = forecast[i];
 
-        history.innerHTML += `
-        <div class="card">
-            <h6>${new Date(dt*1000).toDateString().slice(0,-5)} <h6>
-            <img src="http://openweathermap.org/img/wn/${icon}.png">
+//         history.innerHTML += `
+//         <div class="card">
+//             <h6>${new Date(dt*1000).toDateString().slice(0,-5)} <h6>
+//             <img src="http://openweathermap.org/img/wn/${icon}.png">
 
-            <h6>Temp: ${temp} °F</h6>
-            <h6>Wind: ${speed} mph</h6>
-            <h6>Humidity: ${humidity}%</h6>
-        </div>
-        `;
+//             <h6>Temp: ${temp} °F</h6>
+//             <h6>Wind: ${speed} mph</h6>
+//             <h6>Humidity: ${humidity}%</h6>
+//         </div>
+//         `;
     };
 };
 
@@ -100,23 +103,26 @@ buttonSearchEl.addEventListener("click", function(event) {
 
 
 function saveCity (city) {
-    var storedCities = [];
-    let lowerCaseCity = city.toLowerCase();
-    previousCities = localStorage.getItem("key cities")
+    var storedCities = JSON.parse(localStorage.getItem("key cities")) || [];
+    if (!storedCities.includes(city)){
+
+        storedCities.push(city);
+        localStorage.setItem("key cities", JSON.stringify(storedCities));
+    }
     
-    if (previousCities !== null) {
-        // add a temporary ARRAY to push into
-        var parsedCities = [];
-        parsedCities.push(previousCities);
-        if (previousCities.includes(lowerCaseCity)) {
-            return;
-        };
-        parsedCities.push(lowerCaseCity);
-        storedCities = parsedCities;
-    } else {
-        storedCities.push(lowerCaseCity);
-    };
-    localStorage.setItem("key cities", (storedCities));
+    // if (previousCities !== null) {
+    //     // add a temporary ARRAY to push into
+    //     var parsedCities = [];
+    //     parsedCities.push(previousCities);
+    //     if (previousCities.includes(lowerCaseCity)) {
+    //         return;
+    //     };
+    //     parsedCities.push(lowerCaseCity);
+    //     storedCities = parsedCities;
+    // } else {
+    //     storedCities.push(lowerCaseCity);
+    // };
+
     
     displayHistory(storedCities); 
 };
@@ -192,7 +198,11 @@ function displayHistory(storedCities) {
             text: storedCities[i]
         })
         searchCity.append(cityLink);
-    }
+        cityLink.addEventListener("click", function(event) {
+            preventDefault(event)
+            searchCity(city)
+        });
+    };
 };
 
 
