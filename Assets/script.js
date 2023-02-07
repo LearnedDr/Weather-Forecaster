@@ -45,41 +45,49 @@ function coordinateUrl(latitude, longitude) {
         displayForecast(data.list);
         });
 }
-
+// I used 2 different ways to displayCurrent() and displayForecast(), displayCurrent already had html to target while displayForecast creates them through JS
 function displayCurrent(current) {
     let highTemp = document.getElementById("high-temp");
     let lowTemp = document.getElementById("low-temp");
     let humidity = document.getElementById("humidity");
     let windSpeed = document.getElementById("wind-speed");
-    let airPressure = document.getElementById("air-Pressure");
-    highTemp.textContent = current.main.temp_max;
-    // lowTemp.textContent = current.main.temp_min;
-    // humidity.textContent = current.main.humidity;
+    let airPressure = document.getElementById("air-pressure");
+    highTemp.textContent = current.main.temp_max + " F";
+    lowTemp.textContent = current.main.temp_min + " F";
+    humidity.textContent = current.main.humidity + " %";
+    windSpeed.textContent = current.wind.speed + " mph";
+    airPressure.textContent = current.main.pressure + " millibars";
 };
 
 
 function displayForecast(forecast) {
     
     console.log(forecast);
-
+    var cardCount= 0
     for (let i = 7; i < forecast.length; i+=8) {
+        cardCount ++
         var iconcode = forecast[i].weather[0].icon;
         var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
-        let lowTemp = document.getElementById("weather");
-        lowTemp.setAttribute("src", iconurl);
-
-//         let {dt, main: {temp, humidity}, wind:{speed}, weather:[{icon}] } = forecast[i];
-
-//         history.innerHTML += `
-//         <div class="card">
-//             <h6>${new Date(dt*1000).toDateString().slice(0,-5)} <h6>
-//             <img src="http://openweathermap.org/img/wn/${icon}.png">
-
-//             <h6>Temp: ${temp} °F</h6>
-//             <h6>Wind: ${speed} mph</h6>
-//             <h6>Humidity: ${humidity}%</h6>
-//         </div>
-//         `;
+        let weatherIcon = document.getElementById("weather");
+        weatherIcon.setAttribute("src", iconurl);
+        let forecastCard = document.querySelector(`.forecast-container-` + cardCount);
+        forecastCard.innerHTML = "";
+        console.log(forecastCard);
+        let forecastImage = document.createElement("img");
+        forecastImage.setAttribute("src", iconurl);               
+        forecastCard.appendChild(forecastImage);
+        let forecastMin = document.createElement("p");
+        forecastMin.textContent = "Low " + forecast[i].main.temp_min + " F";
+        forecastCard.appendChild(forecastMin);
+        let forecastMax = document.createElement("p");
+        forecastMax.textContent = "High " + forecast[i].main.temp_max + " F";
+        forecastCard.appendChild(forecastMax);
+        let forecastWind = document.createElement("p");
+        forecastWind.textContent = "Wind " + forecast[i].wind.speed + " mph";
+        forecastCard.appendChild(forecastWind);
+        let forecastHumidity = document.createElement("P");
+        forecastHumidity.textContent = "Humid " + forecast[i].main.humidity + " %";
+        forecastCard.appendChild(forecastHumidity);
     };
 };
 
@@ -92,14 +100,8 @@ buttonSearchEl.addEventListener("click", function(event) {
 })
 
 
-
+// didn't use, found a better loop usage in function displayForecast()
 // ($(new Date(dt+1000).toDateString()))
-
-
-// 1. grab input.value
-// 2. push input.value into an array
-// 3. put array into local storage
-
 
 
 function saveCity (city) {
@@ -110,6 +112,7 @@ function saveCity (city) {
         localStorage.setItem("key cities", JSON.stringify(storedCities));
     }
     
+    // *********attempt at function saveCity() that ultimately had some bugs************
     // if (previousCities !== null) {
     //     // add a temporary ARRAY to push into
     //     var parsedCities = [];
@@ -127,7 +130,7 @@ function saveCity (city) {
     displayHistory(storedCities); 
 };
 
-
+// **********another attempt that function saveCity(************)
 // function saveCity (city) {
 //     var storedCities = [];
 //     let lowerCaseCity = city.toLowerCase();
@@ -183,39 +186,45 @@ function saveCity (city) {
 // 5. make cities clickable to regrab weather api
 //          click event that runs the api fetch
 
-// var searchHistory = document.getElementById("history");
-searchHistoryEl = $("#history");
+var searchHistory = document.getElementById("history");
+// searchHistoryEl = $("#history");
 
 function displayHistory(storedCities) {
     for (var i = 0; i < storedCities.length; i++) {
-        var searchCity = $("<p>", {
-            // class: "nav-item"
+        var historyCity = document.createElement("button");
+        historyCity.textContent = storedCities[i];
+        searchHistory.appendChild(historyCity);
+        historyCity.addEventListener("click", function() {
+            searchCity(historyCity.textContent)
         })
-        searchHistoryEl.append(searchCity);
-        var cityLink = $("<a>", {
-            href: "#",
-            // class:  ,
-            text: storedCities[i]
-        })
-        searchCity.append(cityLink);
-        cityLink.addEventListener("click", function(event) {
-            preventDefault(event)
-            searchCity(city)
-        });
-    };
-};
+    }
+}
+
+displayHistory(JSON.parse(localStorage.getItem("key cities")));
+
+// **********attempt at displayHistory() that kinda worked with previous code**************
+// function displayHistory(storedCities) {
+//     for (var i = 0; i < storedCities.length; i++) {
+//         var searchCity = $("<p>", {
+//             // class: "nav-item"
+//         })
+//         searchHistoryEl.append(searchCity);
+//         var cityLink = $("<a>", {
+//             href: "#",
+//             // class:  ,
+//             text: storedCities[i]
+//         })
+//         searchCity.append(cityLink);
+//         cityLink.addEventListener("click", function(event) {
+            
+//             searchCity(city)
+//         });
+//     };
+// };
 
 
 
-var nothingButton = document.getElementById("nothingness")
-
-nothingButton.addEventListener("click", function(event) {
-
-});
-
-// document.location(./index2.html)
-// city
-
+// *******some notes***************
 //  localStorage.clear("key cities");
 // also empty the storedCities [];
 
